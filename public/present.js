@@ -177,6 +177,20 @@ function connect() {
       if (s.signals?.[0]) {
         currentSignalId = s.signals[0].id;
         elSignal.textContent = s.signals[0].text;
+        // rehydrate agent cards from latest perspectives for this signal
+        const sigId = s.signals[0].id;
+        const persp = (s.perspectives || []).filter((p) => p.signal_id === sigId);
+        for (const p of persp) {
+          const status = p.kind === 'ACT' ? 'engaged' : p.kind === 'PASS' ? 'passed' : 'thinking';
+          setAgentCard(p.agent, { status, text: p.text });
+          // also paint the orbital lens
+          const lens = document.querySelector(`.lens[data-agent="${p.agent}"]`);
+          if (lens) {
+            lens.classList.remove('thinking', 'engaged', 'passed');
+            lens.classList.add(p.kind === 'ACT' ? 'engaged' : 'passed');
+            lens.querySelector('.lens-take').textContent = p.text;
+          }
+        }
       }
       if (s.spacebase) {
         elObsLink.href = s.spacebase.observatory_url;
@@ -187,6 +201,7 @@ function connect() {
         elSynthInsight.textContent = s.insights[0].insight;
         elSynthAction.textContent  = s.insights[0].action;
         elSynthesisBlock.classList.add('live');
+        setAgentCard('SYNTHESIS', { status: 'converged', text: `${s.insights[0].insight} → ${s.insights[0].action}` });
       }
       return;
     }

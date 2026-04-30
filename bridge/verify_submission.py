@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Confirm our hackathon submission is visible in commons."""
+"""Confirm our hackathon submission is visible in commons. Searches by team name."""
 import sys, json
 from pathlib import Path
 
@@ -18,8 +18,23 @@ s = HttpSpaceToolSession(
 s.connect()
 msgs = s.scan_full(PARENT).get("messages", [])
 ours = [m for m in msgs if (m.get("payload") or {}).get("agent_principal") == INFO["principal"]]
-print(f"submissions under official parent: {len(msgs)}")
-print(f"OURS in that list: {len(ours)}")
-for m in ours[-3:]:
+by_name = [m for m in msgs if (m.get("payload") or {}).get("team_name") == "Intent Space Council"]
+
+print("=" * 60)
+print(f"  HACKATHON SUBMISSION COMMONS — under parent {PARENT[:24]}...")
+print("=" * 60)
+print(f"  total submissions in parent: {len(msgs)}")
+print(f"  ours (by principal):         {len(ours)}")
+print(f"  ours (by team name search):  {len(by_name)}")
+print()
+print("  TEAM NAME:  Intent Space Council")
+print("  PRINCIPAL:  " + INFO["principal"])
+print()
+for i, m in enumerate(ours, 1):
     pl = m.get("payload") or {}
-    print(f"  intentId={m.get('intentId')} repo={pl.get('repo_url')}")
+    print(f"  [{i}] intent: {m.get('intentId')}")
+    print(f"      team:   {pl.get('team_name')}")
+    print(f"      kind:   {pl.get('kind')}")
+    print(f"      event:  {pl.get('event')}")
+    print(f"      repo:   {pl.get('repo_url')}")
+    print()
