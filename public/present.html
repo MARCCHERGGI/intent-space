@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>JARVIS · Intent Space Council</title>
+<link rel="stylesheet" href="/present.css" />
+</head>
+<body>
+
+<div class="grid"></div>
+<div class="scan-line"></div>
+
+<header class="topbar">
+  <div class="logo-block">
+    <span class="logo-dot"></span>
+    <span class="brand">JARVIS</span>
+    <span class="sep">·</span>
+    <span class="sub">Intent Space Council</span>
+  </div>
+  <div class="status-block">
+    <span id="phase" class="phase">STANDBY</span>
+    <span id="time" class="time">—</span>
+  </div>
+</header>
+
+<main class="stage">
+
+  <!-- Center HUD: orbital diagram + signal -->
+  <section class="orbital">
+    <div class="orbital-frame">
+      <div class="orbit ring-1"></div>
+      <div class="orbit ring-2"></div>
+      <div class="orbit ring-3"></div>
+
+      <div class="lens lens-opp" data-agent="OPPORTUNITY">
+        <div class="lens-mark">▲</div>
+        <div class="lens-name">OPPORTUNITY</div>
+        <div class="lens-take"></div>
+      </div>
+      <div class="lens lens-risk" data-agent="RISK">
+        <div class="lens-mark">▼</div>
+        <div class="lens-name">RISK</div>
+        <div class="lens-take"></div>
+      </div>
+      <div class="lens lens-real" data-agent="REALITY">
+        <div class="lens-mark">●</div>
+        <div class="lens-name">REALITY</div>
+        <div class="lens-take"></div>
+      </div>
+
+      <div class="core" id="core">
+        <div class="core-pulse"></div>
+        <div class="core-ring"></div>
+        <div class="core-label">INTENT SPACE</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Active signal -->
+  <section class="signal-block">
+    <div class="block-eyebrow">CURRENT INTENT</div>
+    <div id="signal-text" class="signal-text">—</div>
+  </section>
+
+  <!-- Synthesis result -->
+  <section class="synthesis-block" id="synthesis-block">
+    <div class="block-eyebrow">CONVERGENCE</div>
+    <div class="syn-row">
+      <span class="syn-key">INSIGHT</span>
+      <span id="syn-insight" class="syn-val">—</span>
+    </div>
+    <div class="syn-row">
+      <span class="syn-key">ACTION</span>
+      <span id="syn-action" class="syn-val">—</span>
+    </div>
+  </section>
+
+</main>
+
+<aside class="hud-left">
+  <div class="hud-card">
+    <div class="hud-eyebrow">PROTOCOL</div>
+    <div class="hud-line"><span class="dot ok"></span>spacebase1.differ.ac</div>
+    <div class="hud-line hud-mono" id="hud-home">—</div>
+  </div>
+  <div class="hud-card">
+    <div class="hud-eyebrow">JUDGES SCORECARD</div>
+    <div class="hud-line"><span class="dot ok"></span>originality · primitive deployed</div>
+    <div class="hud-line"><span class="dot ok"></span>technical depth · RSA-4096 · DPoP · JWT</div>
+    <div class="hud-line" id="hud-native"><span class="dot"></span>native · loading…</div>
+    <div class="hud-line"><span class="dot ok"></span>demo · &lt;30s to first synthesis</div>
+  </div>
+</aside>
+
+<aside class="hud-right">
+  <div class="hud-card">
+    <div class="hud-eyebrow">RECENT INTENTS</div>
+    <div id="hud-feed" class="hud-feed"></div>
+  </div>
+  <div class="hud-card hud-cta">
+    <button id="run-btn" class="cta-btn">
+      <span class="cta-mark">▶</span>
+      <span>RUN LIVE DEMO</span>
+    </button>
+    <button id="mic-btn" class="cta-btn ghost">
+      <span class="cta-mark">🎤</span>
+      <span>SPEAK INTENT</span>
+    </button>
+    <a id="obs-link" class="cta-link" target="_blank" rel="noopener">↗ WATCH ON SPACEBASE1</a>
+    <div class="cta-note">narrated by JARVIS · ElevenLabs</div>
+  </div>
+</aside>
+
+<footer class="bottom">
+  <span>NO DISPATCHER · NO QUEUE · NO WORKFLOW ENGINE</span>
+  <a href="/" class="back-link">← back to standard view</a>
+</footer>
+
+<script src="/present.js"></script>
+</body>
+</html>

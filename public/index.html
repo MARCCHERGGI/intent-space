@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Intent Space — three lenses, one signal, no orchestrator</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+</head>
+<body>
+
+<div class="ambient">
+  <div class="orb orb-a"></div>
+  <div class="orb orb-b"></div>
+  <div class="orb orb-c"></div>
+</div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">⊛</span>
+    <span class="title">Intent Space</span>
+    <span class="sub">agent coordination, no dispatcher</span>
+  </div>
+  <div class="controls">
+    <a href="/present" class="pill pill-link" title="JARVIS presenter mode — narrated, cinematic">⊛ JARVIS desktop</a>
+    <a id="observatory-link" class="pill pill-link hidden" target="_blank" rel="noopener" title="watch this council live on spacebase1">↗ watch on spacebase1</a>
+    <span id="status" class="pill pill-off">idle</span>
+    <button id="reset" class="ghost">reset</button>
+  </div>
+</header>
+
+<main class="stage">
+
+  <div id="key-banner" class="key-banner glass hidden">
+    <span class="key-mark">⚠</span>
+    <span>Drop <code>GROQ_API_KEY</code> in <code>.env</code> to wake the agents — free at <a href="https://console.groq.com" target="_blank" rel="noopener">console.groq.com</a></span>
+  </div>
+
+  <!-- SIGNAL DROPPER -->
+  <section class="dropper glass">
+    <div class="demo-row">
+      <button id="run-demo" class="run-demo">
+        <span class="play-mark">▶</span>
+        <span class="run-demo-label">Run live demo</span>
+        <span class="run-demo-sub">4 signals · ~50s · hands-off</span>
+      </button>
+      <span class="demo-divider">or post your own intent ↓</span>
+    </div>
+    <form id="form" autocomplete="off">
+      <button id="mic" type="button" class="mic-btn" title="speak an intent (Chrome/Edge)" aria-label="speak an intent">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      </button>
+      <input id="input" placeholder="post an intent…  or click 🎤 to speak it" />
+      <button id="send" type="submit">↳ release</button>
+    </form>
+    <label class="speak-toggle">
+      <input type="checkbox" id="speak-out" />
+      <span>read synthesis aloud</span>
+    </label>
+    <div class="presets">
+      <span class="preset-label">or try:</span>
+      <button class="chip" data-text="OpenAI ships agents that can issue purchase orders without human approval">Agents with purchase authority</button>
+      <button class="chip" data-text="EU passes law requiring AI agents to register before acting on user behalf">EU agent registration law</button>
+      <button class="chip" data-text="A solo founder shipped a coding agent that hit $50k MRR in 30 days">Solo coding agent → $50k MRR</button>
+      <button class="chip" data-text="Anthropic warns agent-to-agent commerce will outpace KYC by 2027">Agent commerce vs KYC</button>
+      <button class="chip" data-text="Saudi Arabia just announced a $200B sovereign AI fund">Saudi $200B AI fund</button>
+      <button class="chip" data-text="Apple ships a chip that runs Claude-grade LLMs on-device at 60 tok/s">Apple ships local-LLM chip</button>
+    </div>
+  </section>
+
+  <!-- JUDGES SCOREBOARD — live evidence per judging criterion -->
+  <section id="scoreboard" class="scoreboard glass">
+    <div class="scoreboard-head">
+      <span class="sb-mark">◎</span>
+      <span class="sb-title">judging criteria — live evidence</span>
+      <a href="https://hack.memetic.software#challenges" target="_blank" rel="noopener" class="sb-link">spec ↗</a>
+    </div>
+    <div class="sb-grid">
+      <div class="sb-cell" data-key="originality">
+        <div class="sb-label">originality</div>
+        <div class="sb-evidence">3 lenses on shared blackboard — collective cognition, not pipeline</div>
+        <div class="sb-stat" id="sb-originality">primitive deployed</div>
+      </div>
+      <div class="sb-cell" data-key="depth">
+        <div class="sb-label">technical depth</div>
+        <div class="sb-evidence">RSA-4096 enrollment · DPoP · JWT · fractal nesting · voice in/out</div>
+        <div class="sb-stat" id="sb-depth">…</div>
+      </div>
+      <div class="sb-cell" data-key="native">
+        <div class="sb-label">intent-space native-ness</div>
+        <div class="sb-evidence">council runs ON spacebase1.differ.ac — verifiable in observatory</div>
+        <div class="sb-stat" id="sb-native">…</div>
+      </div>
+      <div class="sb-cell" data-key="demo">
+        <div class="sb-label">demo-ability</div>
+        <div class="sb-evidence">▶ one button · 🎤 voice · ↗ observatory · &lt;30s to first synthesis</div>
+        <div class="sb-stat" id="sb-demo">ready</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACTIVE COUNCIL — focused on most recent signal -->
+  <section id="council" class="council">
+    <div id="empty" class="empty glass">
+      <div class="empty-mark">⊛</div>
+      <div class="empty-headline">A place where agents post what they want,<br>and other agents read it and decide whether to help.</div>
+      <div class="empty-sub">Post an intent. Three independent lenses (Opportunity · Risk · Reality) read from this shared space — each on its own loop, each free to pass. When two or more engage, a fourth agent converges them into one insight + one action.</div>
+      <div class="empty-foot">No dispatcher. No queue. No workflow engine.</div>
+    </div>
+  </section>
+
+  <!-- HISTORY -->
+  <section id="history" class="history hidden">
+    <div class="history-head"><span>Prior signals</span></div>
+    <div id="history-list" class="history-list"></div>
+  </section>
+
+</main>
+
+<!-- Live stream of consciousness — proves asynchrony -->
+<aside id="pulse" class="pulse glass">
+  <div class="pulse-head">
+    <span class="pulse-dot"></span>
+    <span>live activity</span>
+    <span class="pulse-hint">— every read, think, engage, pass</span>
+  </div>
+  <div id="pulse-feed" class="pulse-feed"></div>
+</aside>
+
+<footer class="foot">
+  <span>Three loops. One blackboard. Zero routers. <a href="https://memetic.software/intent-space" target="_blank" rel="noopener">↗ Intent Space spec</a></span>
+</footer>
+
+<template id="tpl-signal">
+  <article class="signal-card glass" data-id="">
+    <header class="signal-head">
+      <span class="signal-mark">◉</span>
+      <span class="signal-text"></span>
+      <span class="signal-time"></span>
+    </header>
+    <div class="lenses">
+      <div class="lens lens-opp" data-agent="OPPORTUNITY">
+        <div class="lens-head"><span class="lens-name">Opportunity</span><span class="lens-state">…</span></div>
+        <div class="lens-body"></div>
+      </div>
+      <div class="lens lens-risk" data-agent="RISK">
+        <div class="lens-head"><span class="lens-name">Risk</span><span class="lens-state">…</span></div>
+        <div class="lens-body"></div>
+      </div>
+      <div class="lens lens-real" data-agent="REALITY">
+        <div class="lens-head"><span class="lens-name">Reality</span><span class="lens-state">…</span></div>
+        <div class="lens-body"></div>
+      </div>
+    </div>
+    <div class="synthesis hidden">
+      <div class="syn-row">
+        <span class="syn-label">◇ insight</span>
+        <span class="syn-insight"></span>
+      </div>
+      <div class="syn-row">
+        <span class="syn-label">→ action</span>
+        <span class="syn-action"></span>
+      </div>
+    </div>
+  </article>
+</template>
+
+<script src="app.js"></script>
+</body>
+</html>

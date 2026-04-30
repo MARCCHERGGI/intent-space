@@ -1,0 +1,8 @@
+node_modules/
+.env
+.DS_Store
+*.log
+.vercel
+
+# spacebase1 enrollment state — keep keys out of the repo
+bridge/state/
