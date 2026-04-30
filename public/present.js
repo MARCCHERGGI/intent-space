@@ -77,6 +77,32 @@ async function playOne(text) {
 }
 
 // Render handlers
+function resetAgentCards() {
+  document.querySelectorAll('.agent-card').forEach((c) => {
+    c.classList.remove('thinking', 'engaged', 'passed');
+    const status = c.querySelector('.ac-status');
+    const text = c.querySelector('.ac-text');
+    if (status) { status.dataset.status = 'standby'; status.textContent = 'STANDBY'; }
+    if (text) {
+      text.textContent = c.dataset.agent === 'SYNTHESIS' ? 'awaits ≥2 quorum' : 'awaiting signal';
+    }
+  });
+}
+
+function setAgentCard(agent, { status, text } = {}) {
+  const card = document.querySelector(`.agent-card[data-agent="${agent}"]`);
+  if (!card) return;
+  if (status) {
+    card.classList.remove('thinking', 'engaged', 'passed');
+    if (status === 'thinking') card.classList.add('thinking');
+    if (status === 'engaged')  card.classList.add('engaged');
+    if (status === 'passed')   card.classList.add('passed');
+    const s = card.querySelector('.ac-status');
+    if (s) { s.dataset.status = status; s.textContent = status === 'engaged' ? 'ENGAGED' : status === 'thinking' ? 'THINKING' : status === 'passed' ? 'PASSED' : status === 'converged' ? 'CONVERGED' : 'STANDBY'; }
+  }
+  if (text != null) card.querySelector('.ac-text').textContent = text;
+}
+
 function startSignal(signal) {
   currentSignalId = signal.id;
   elSignal.textContent = signal.text;
@@ -84,11 +110,12 @@ function startSignal(signal) {
   void elSignal.offsetWidth;
   elSignal.classList.add('alive');
   elSynthesisBlock.classList.remove('live');
-  // reset lens cards
+  // reset lens cards (orbital) + agent panel cards
   document.querySelectorAll('.lens').forEach((l) => {
     l.classList.remove('thinking', 'engaged', 'passed');
     l.querySelector('.lens-take').textContent = '';
   });
+  resetAgentCards();
   setPhase('SIGNAL', 'signal');
   elCore.classList.add('active');
   speak(`New intent. ${signal.text}.`);
@@ -96,22 +123,21 @@ function startSignal(signal) {
 
 function lensThinking(agent) {
   const lens = document.querySelector(`.lens[data-agent="${agent}"]`);
-  if (!lens) return;
-  lens.classList.add('thinking');
+  if (lens) lens.classList.add('thinking');
+  setAgentCard(agent, { status: 'thinking', text: '…thinking' });
   setPhase('THINKING', 'thinking');
 }
 
 function lensResult(agent, kind, text) {
   const lens = document.querySelector(`.lens[data-agent="${agent}"]`);
-  if (!lens) return;
-  lens.classList.remove('thinking');
-  lens.querySelector('.lens-take').textContent = text;
-  if (kind === 'ACT') {
-    lens.classList.add('engaged');
-    speak(`${humanize(agent)}. ${text}.`);
-  } else {
-    lens.classList.add('passed');
+  if (lens) {
+    lens.classList.remove('thinking');
+    lens.querySelector('.lens-take').textContent = text;
+    if (kind === 'ACT') lens.classList.add('engaged');
+    else lens.classList.add('passed');
   }
+  setAgentCard(agent, { status: kind === 'ACT' ? 'engaged' : 'passed', text });
+  if (kind === 'ACT') speak(`${humanize(agent)}. ${text}.`);
 }
 
 function showSynthesis(insight, action) {
@@ -119,6 +145,7 @@ function showSynthesis(insight, action) {
   elSynthAction.textContent = action;
   elSynthesisBlock.classList.add('live');
   setPhase('CONVERGED', 'converged');
+  setAgentCard('SYNTHESIS', { status: 'converged', text: `${insight} → ${action}` });
   setTimeout(() => elCore.classList.remove('active'), 400);
   speak(`Council converged. Insight. ${insight}. Action. ${action}.`);
 }

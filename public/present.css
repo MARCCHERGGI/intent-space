@@ -92,10 +92,97 @@ a { color: inherit; }
 .stage {
   position: relative; z-index: 4;
   display: grid;
-  grid-template-rows: 1fr auto auto;
+  grid-template-rows: auto 1fr auto auto;
   height: calc(100vh - 130px);
-  padding: 24px 32px;
-  gap: 16px;
+  padding: 16px 32px 24px;
+  gap: 14px;
+}
+
+/* AGENT STATUS BAR — the clear panel row */
+.agent-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 0;
+}
+.agent-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  grid-template-rows: auto auto;
+  grid-template-areas: "mark meta" "text text";
+  gap: 4px 12px;
+  padding: 12px 14px;
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  transition: all 0.4s var(--ease);
+  min-height: 84px;
+}
+.agent-card[data-agent="OPPORTUNITY"] { --acolor: var(--opp); }
+.agent-card[data-agent="RISK"]        { --acolor: var(--risk); }
+.agent-card[data-agent="REALITY"]     { --acolor: var(--real); }
+.agent-card[data-agent="SYNTHESIS"]   { --acolor: var(--syn); }
+.ac-mark {
+  grid-area: mark;
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--acolor);
+  color: var(--acolor);
+  font-size: 16px;
+  background: rgba(0, 0, 0, 0.4);
+  transition: all 0.4s var(--ease);
+}
+.ac-meta { grid-area: meta; display: flex; flex-direction: column; justify-content: center; gap: 3px; }
+.ac-name {
+  font-family: var(--mono);
+  font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
+  color: var(--acolor);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--acolor) 40%, transparent);
+}
+.ac-status {
+  font-family: var(--mono);
+  font-size: 9px; font-weight: 700; letter-spacing: 0.2em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+.ac-status[data-status="thinking"] { color: #ffd47f; animation: ac-blink 1s var(--ease) infinite; }
+.ac-status[data-status="engaged"]  { color: var(--acolor); }
+.ac-status[data-status="passed"]   { color: var(--ink-dim); }
+.ac-status[data-status="converged"] { color: var(--syn); }
+@keyframes ac-blink { 50% { opacity: 0.4; } }
+.ac-text {
+  grid-area: text;
+  font-size: 12px; line-height: 1.4;
+  color: var(--ink-mid);
+  font-family: var(--mono); font-weight: 500;
+  min-height: 17px;
+  letter-spacing: 0;
+}
+.agent-card.thinking {
+  border-color: color-mix(in srgb, var(--acolor) 50%, transparent);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--acolor) 18%, transparent) inset;
+}
+.agent-card.thinking .ac-mark { animation: ac-think 1s var(--ease) infinite; box-shadow: 0 0 18px var(--acolor); }
+@keyframes ac-think { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+.agent-card.engaged {
+  border-color: var(--acolor);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--acolor) 8%, var(--bg-glass)), var(--bg-glass));
+  box-shadow: 0 0 32px color-mix(in srgb, var(--acolor) 22%, transparent), 0 0 12px color-mix(in srgb, var(--acolor) 18%, transparent) inset;
+}
+.agent-card.engaged .ac-mark {
+  background: var(--acolor); color: #020610 !important;
+  box-shadow: 0 0 28px var(--acolor);
+}
+.agent-card.engaged .ac-text { color: var(--ink); }
+.agent-card.passed { opacity: 0.55; }
+.agent-card.passed .ac-text { font-style: italic; color: var(--ink-dim); }
+
+@media (max-width: 1100px) {
+  .agent-bar { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* ORBITAL DIAGRAM */

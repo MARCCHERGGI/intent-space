@@ -26,6 +26,42 @@
 
 <main class="stage">
 
+  <!-- AGENT STATUS BAR — 4 cards, always visible -->
+  <section class="agent-bar">
+    <div class="agent-card" data-agent="OPPORTUNITY">
+      <div class="ac-mark">▲</div>
+      <div class="ac-meta">
+        <div class="ac-name">OPPORTUNITY</div>
+        <div class="ac-status" data-status="standby">STANDBY</div>
+      </div>
+      <div class="ac-text">awaiting signal</div>
+    </div>
+    <div class="agent-card" data-agent="RISK">
+      <div class="ac-mark">▼</div>
+      <div class="ac-meta">
+        <div class="ac-name">RISK</div>
+        <div class="ac-status" data-status="standby">STANDBY</div>
+      </div>
+      <div class="ac-text">awaiting signal</div>
+    </div>
+    <div class="agent-card" data-agent="REALITY">
+      <div class="ac-mark">●</div>
+      <div class="ac-meta">
+        <div class="ac-name">REALITY</div>
+        <div class="ac-status" data-status="standby">STANDBY</div>
+      </div>
+      <div class="ac-text">awaiting signal</div>
+    </div>
+    <div class="agent-card" data-agent="SYNTHESIS">
+      <div class="ac-mark">◇</div>
+      <div class="ac-meta">
+        <div class="ac-name">SYNTHESIS</div>
+        <div class="ac-status" data-status="standby">STANDBY</div>
+      </div>
+      <div class="ac-text">awaits ≥2 quorum</div>
+    </div>
+  </section>
+
   <!-- Center HUD: orbital diagram + signal -->
   <section class="orbital">
     <div class="orbital-frame">

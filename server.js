@@ -66,10 +66,12 @@ let statsCache = { ts: 0, data: null };
 const STATS_SCRIPT = path.resolve(__dirname, 'bridge', 'stats.py');
 function fetchStats() {
   return new Promise((resolve) => {
-    const p = spawn('python', [STATS_SCRIPT], { windowsHide: true });
+    const PY = process.env.PYTHON || (process.platform === 'win32' ? 'py' : 'python3');
+    const p = spawn(PY, [STATS_SCRIPT], { windowsHide: true, shell: process.platform === 'win32' });
     let out = '';
     const t = setTimeout(() => { try { p.kill(); } catch {} resolve(null); }, 8000);
     p.stdout.on('data', (d) => out += d.toString());
+    p.on('error', () => { clearTimeout(t); resolve(null); });
     p.on('close', () => {
       clearTimeout(t);
       try { resolve(JSON.parse(out.trim().split('\n').pop())); } catch { resolve(null); }
