@@ -327,47 +327,37 @@ if (SR) {
 // kick off
 connect();
 
-// JARVIS: greet on first user gesture (browsers gate audio behind interaction)
-let _greeted = false;
-function jarvisGreet() {
-  if (_greeted) return;
-  _greeted = true;
+// ─────────── JARVIS WAKE SEQUENCE ───────────
+// Pre-wake: only the JARVIS pulse + "PRESS SPACE" is visible.
+// Spacebar (or any click) → zoom to Manhattan, fade in HUD, JARVIS greets, run demo.
+let _woken = false;
+async function wakeJarvis() {
+  if (_woken) return;
+  _woken = true;
+  // Fire the JARVIS_HOME zoom-to-Manhattan tween
+  const zoomDone = window.__jarvisZoomToManhattan
+    ? window.__jarvisZoomToManhattan({ duration: 4200 })
+    : Promise.resolve();
+  // Brief greet plays during the zoom
   setPhase('ONLINE', 'signal');
-  speak(
-    "JARVIS online. Intent Space Council. Three lenses, one signal, no orchestrator. " +
-    "Press space to run the live demo. I'll narrate the council as it converges."
-  );
+  speak("JARVIS online. Council standing by.");
+  // Reveal the HUD as the zoom lands
+  setTimeout(() => { document.body.classList.remove('pre-wake'); }, 800);
+  await zoomDone;
+  // Auto-trigger the live demo after the wake settles
+  const runBtn = $('#run-btn');
+  if (runBtn && !runBtn.disabled) runBtn.click();
 }
-window.addEventListener('pointerdown', jarvisGreet, { once: true });
-window.addEventListener('keydown', jarvisGreet, { once: true });
 
-// Auto-bind run-btn so a single click also unlocks the greet
-const _runBtn = $('#run-btn');
-_runBtn?.addEventListener('click', () => { jarvisGreet(); }, { capture: true });
-
-// SPACEBAR = run live demo (the magic Marco wants)
+// SPACEBAR or first click anywhere triggers the wake
 window.addEventListener('keydown', (e) => {
-  // ignore if user is typing in an input/textarea
   if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
   if (e.code === 'Space' || e.key === ' ') {
     e.preventDefault();
-    jarvisGreet();
-    if (_runBtn && !_runBtn.disabled) _runBtn.click();
+    wakeJarvis();
   }
 });
+window.addEventListener('pointerdown', wakeJarvis, { once: true });
 
-// PROOF STRIP — wire the live counters from /spacebase-stats
-async function refreshProof() {
-  try {
-    const r = await fetch('/spacebase-stats');
-    const d = await r.json();
-    if (d?.ok) {
-      const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-      set('ps-signals', d.signals ?? 0);
-      set('ps-syntheses', d.syntheses ?? 0);
-      set('ps-engaged', d.perspectives_engaged ?? 0);
-    }
-  } catch {}
-}
-refreshProof();
-setInterval(refreshProof, 4000);
+// Run-again button just runs (assumes already woken)
+$('#run-btn')?.addEventListener('click', () => { _woken = true; document.body.classList.remove('pre-wake'); });

@@ -451,6 +451,69 @@ a { color: inherit; }
   .hud-left, .hud-right { display: none; }
 }
 
+/* ───────── PRE-WAKE OVERLAY — minimal entry screen ───────── */
+body.pre-wake .awake-only { opacity: 0; pointer-events: none; }
+body:not(.pre-wake) .pre-wake-overlay { opacity: 0; pointer-events: none; }
+.awake-only { transition: opacity 1.2s var(--ease); }
+.pre-wake-overlay {
+  position: fixed; inset: 0; z-index: 6;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 14px;
+  transition: opacity 0.8s var(--ease);
+  pointer-events: none;
+}
+.pw-pulse {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--jarvis);
+  box-shadow: 0 0 28px rgba(126,213,255,0.6), 0 0 64px rgba(126,213,255,0.3);
+  animation: pw-pulse 1.6s var(--ease) infinite;
+  margin-bottom: 4px;
+}
+@keyframes pw-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.6; }
+}
+.pw-brand {
+  font-family: var(--mono);
+  font-size: 28px; font-weight: 700; letter-spacing: 0.32em;
+  color: var(--jarvis);
+  text-shadow: 0 0 22px rgba(126,213,255,0.55);
+}
+.pw-sub {
+  font-family: var(--mono);
+  font-size: 11px; font-weight: 600; letter-spacing: 0.28em;
+  color: var(--ink-mid);
+}
+.pw-hint {
+  margin-top: 24px;
+  font-family: var(--mono);
+  font-size: 10px; font-weight: 700; letter-spacing: 0.28em;
+  color: var(--ink-dim);
+  animation: pw-hint 2.2s var(--ease) infinite;
+}
+.pw-hint kbd {
+  display: inline-block;
+  padding: 2px 10px; margin: 0 4px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: rgba(126,213,255,0.08);
+  color: var(--jarvis);
+  font: inherit;
+}
+@keyframes pw-hint { 50% { opacity: 0.4; } }
+
+/* hide orbital scaffolding entirely — present.js still needs the elements */
+.orbital-hidden { position: fixed; left: -9999px; top: -9999px; opacity: 0; }
+
+/* tiny floating controls, bottom-right — minimalist */
+.hud-controls {
+  position: fixed; right: 24px; bottom: 24px;
+  display: flex; flex-direction: column; gap: 8px;
+  z-index: 5; align-items: flex-end;
+}
+
+.spacer { flex: 1; min-height: 30px; }
+
 /* ─────────────────────  PROOF STRIP — top hero band  ───────────────────── */
 .proof-strip {
   position: fixed; top: 64px; left: 50%; transform: translateX(-50%);

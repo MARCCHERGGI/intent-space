@@ -6,7 +6,7 @@
 <title>JARVIS · Intent Space Council</title>
 <link rel="stylesheet" href="/present.css" />
 </head>
-<body>
+<body class="pre-wake">
 
 <!-- JARVIS v1 Earth scene — Three.js, ported from JARVIS_HOME -->
 <div id="earth-mount" class="earth-mount"></div>
@@ -14,40 +14,15 @@
 <div class="grid"></div>
 <div class="scan-line"></div>
 
-<!-- HERO PROOF STRIP — what the judge reads in the first 3 seconds -->
-<section class="proof-strip">
-  <div class="proof-stat">
-    <div class="proof-num" id="ps-agents">4</div>
-    <div class="proof-lbl">AGENTS</div>
-    <div class="proof-sub">3 lenses + 1 synthesizer</div>
-  </div>
-  <div class="proof-divider"></div>
-  <div class="proof-stat">
-    <div class="proof-num zero">0</div>
-    <div class="proof-lbl">ORCHESTRATORS</div>
-    <div class="proof-sub">no router · no queue · no scheduler</div>
-  </div>
-  <div class="proof-divider"></div>
-  <div class="proof-stat">
-    <div class="proof-num live" id="ps-signals">—</div>
-    <div class="proof-lbl">SIGNALS ON-PROTOCOL</div>
-    <div class="proof-sub">posted to spacebase1 commons</div>
-  </div>
-  <div class="proof-divider"></div>
-  <div class="proof-stat">
-    <div class="proof-num live" id="ps-syntheses">—</div>
-    <div class="proof-lbl">SYNTHESES CONVERGED</div>
-    <div class="proof-sub">≥2 lens quorum required</div>
-  </div>
-  <div class="proof-divider"></div>
-  <div class="proof-stat">
-    <div class="proof-num live" id="ps-engaged">—</div>
-    <div class="proof-lbl">PERSPECTIVES ENGAGED</div>
-    <div class="proof-sub">free to read · free to pass</div>
-  </div>
+<!-- PRE-WAKE OVERLAY — minimal: just the JARVIS pulse + space hint -->
+<section id="pre-wake" class="pre-wake-overlay">
+  <div class="pw-pulse"></div>
+  <div class="pw-brand">JARVIS</div>
+  <div class="pw-sub">INTENT SPACE COUNCIL</div>
+  <div class="pw-hint">PRESS <kbd>SPACE</kbd> TO BEGIN</div>
 </section>
 
-<header class="topbar">
+<header class="topbar awake-only">
   <div class="logo-block">
     <span class="logo-dot"></span>
     <span class="brand">JARVIS</span>
@@ -60,9 +35,9 @@
   </div>
 </header>
 
-<main class="stage">
+<main class="stage awake-only">
 
-  <!-- AGENT STATUS BAR — 4 cards, always visible -->
+  <!-- AGENT STATUS BAR — 4 cards, the only content -->
   <section class="agent-bar">
     <div class="agent-card" data-agent="OPPORTUNITY">
       <div class="ac-mark">▲</div>
@@ -98,46 +73,16 @@
     </div>
   </section>
 
-  <!-- Center HUD: orbital diagram + signal -->
-  <section class="orbital">
-    <div class="orbital-frame">
-      <div class="orbit ring-1"></div>
-      <div class="orbit ring-2"></div>
-      <div class="orbit ring-3"></div>
+  <div class="spacer"></div>
 
-      <div class="lens lens-opp" data-agent="OPPORTUNITY">
-        <div class="lens-mark">▲</div>
-        <div class="lens-name">OPPORTUNITY</div>
-        <div class="lens-take"></div>
-      </div>
-      <div class="lens lens-risk" data-agent="RISK">
-        <div class="lens-mark">▼</div>
-        <div class="lens-name">RISK</div>
-        <div class="lens-take"></div>
-      </div>
-      <div class="lens lens-real" data-agent="REALITY">
-        <div class="lens-mark">●</div>
-        <div class="lens-name">REALITY</div>
-        <div class="lens-take"></div>
-      </div>
-
-      <div class="core" id="core">
-        <div class="core-pulse"></div>
-        <div class="core-ring"></div>
-        <div class="core-label">INTENT SPACE</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Active signal -->
+  <!-- Active signal — single line, big, center -->
   <section class="signal-block">
     <div class="block-eyebrow">CURRENT INTENT</div>
     <div id="signal-text" class="signal-text">—</div>
   </section>
 
-  <!-- Synthesis result -->
+  <!-- Synthesis result — appears only when council converges -->
   <section class="synthesis-block" id="synthesis-block">
-    <div class="block-eyebrow">CONVERGENCE</div>
     <div class="syn-row">
       <span class="syn-key">INSIGHT</span>
       <span id="syn-insight" class="syn-val">—</span>
@@ -150,82 +95,31 @@
 
 </main>
 
-<aside class="hud-left">
-  <div class="hud-card">
-    <div class="hud-eyebrow">PROTOCOL</div>
-    <div class="hud-line"><span class="dot ok"></span>spacebase1.differ.ac</div>
-    <div class="hud-line hud-mono" id="hud-home">—</div>
-  </div>
-  <div class="hud-card" style="border:1px solid rgba(0,255,170,0.45)">
-    <div class="hud-eyebrow" style="color:#5fffc4">✓ HACKATHON SUBMISSION LIVE</div>
-    <div class="hud-line"><span class="dot ok"></span>posted to commons under hackathon parent</div>
-    <div class="hud-line hud-mono" style="font-size:9px;opacity:0.8">parent · intent-413e0bc5…350e220df03c</div>
-    <div class="hud-line hud-mono" style="font-size:9px;opacity:0.8">ours  · intent-6c7520e5…a46a2e5bf8c7</div>
-    <div class="hud-line"><span class="dot ok"></span>kind: hackathon-submission</div>
-    <div class="hud-line"><span class="dot ok"></span>event: spacebase1-hackathon-2026</div>
-    <div class="hud-line"><span class="dot ok"></span>team: Intent Space Council</div>
-    <div class="hud-line"><a href="https://github.com/MARCCHERGGI/intent-space" target="_blank" rel="noopener" style="color:#7adfff">↗ github.com/MARCCHERGGI/intent-space</a></div>
-  </div>
-  <div class="hud-card hud-scorecard">
-    <div class="hud-eyebrow">JUDGES SCORECARD · 4 CRITERIA</div>
+<!-- Hidden orbital scaffolding kept for present.js compatibility (no visual weight) -->
+<div class="orbital-hidden" aria-hidden="true">
+  <div class="lens" data-agent="OPPORTUNITY"><span class="lens-take"></span></div>
+  <div class="lens" data-agent="RISK"><span class="lens-take"></span></div>
+  <div class="lens" data-agent="REALITY"><span class="lens-take"></span></div>
+  <div class="core" id="core"></div>
+</div>
 
-    <div class="crit">
-      <div class="crit-head"><span class="crit-name">ORIGINALITY</span><span class="crit-stars">★★★★★</span></div>
-      <div class="crit-evi">primitive deployed — not an app on intent space, a piece <em>of</em> it</div>
-      <div class="crit-evi">3 lenses on shared blackboard · collective cognition</div>
-    </div>
-
-    <div class="crit">
-      <div class="crit-head"><span class="crit-name">TECHNICAL DEPTH</span><span class="crit-stars">★★★★★</span></div>
-      <div class="crit-evi">RSA-4096 enrollment · DPoP-signed HTTPS · RS256 JWT</div>
-      <div class="crit-evi">official intent-space SDK · fractal nesting verified</div>
-      <div class="crit-evi">voice in (Web Speech) · voice out (ElevenLabs Turbo)</div>
-    </div>
-
-    <div class="crit">
-      <div class="crit-head"><span class="crit-name">INTENT-SPACE NATIVE</span><span class="crit-stars">★★★★★</span></div>
-      <div class="crit-evi" id="hud-native">council runs ON spacebase1 · loading counts…</div>
-      <div class="crit-evi">verifiable in observatory · click ↗ link below</div>
-    </div>
-
-    <div class="crit">
-      <div class="crit-head"><span class="crit-name">DEMO-ABILITY</span><span class="crit-stars">★★★★★</span></div>
-      <div class="crit-evi">▶ one button · 4 signals · ~50s · zero hands</div>
-      <div class="crit-evi">&lt;30s to first synthesis · cinematic JARVIS narration</div>
-    </div>
-  </div>
-
-  <div class="hud-card why-wins">
-    <div class="hud-eyebrow why-eyebrow">WHY THIS WINS</div>
-    <div class="why-quote">Every other team built an app that <em>talks to</em> intent space.</div>
-    <div class="why-quote bold">We built a piece <em>of</em> intent space.</div>
-    <div class="why-foot">tenant vs. architect.</div>
-  </div>
+<!-- Tiny anchored controls — only visible when awake -->
+<aside class="hud-controls awake-only">
+  <button id="run-btn" class="cta-btn">
+    <span class="cta-mark">▶</span>
+    <span>RUN AGAIN</span>
+  </button>
+  <button id="mic-btn" class="cta-btn ghost">
+    <span class="cta-mark">🎤</span>
+    <span>SPEAK</span>
+  </button>
+  <a id="obs-link" class="cta-link" target="_blank" rel="noopener">↗ OBSERVATORY</a>
 </aside>
 
-<aside class="hud-right">
-  <div class="hud-card">
-    <div class="hud-eyebrow">RECENT INTENTS</div>
-    <div id="hud-feed" class="hud-feed"></div>
-  </div>
-  <div class="hud-card hud-cta">
-    <button id="run-btn" class="cta-btn">
-      <span class="cta-mark">▶</span>
-      <span>RUN LIVE DEMO</span>
-    </button>
-    <button id="mic-btn" class="cta-btn ghost">
-      <span class="cta-mark">🎤</span>
-      <span>SPEAK INTENT</span>
-    </button>
-    <a id="obs-link" class="cta-link" target="_blank" rel="noopener">↗ WATCH ON SPACEBASE1</a>
-    <div class="cta-note">narrated by JARVIS · ElevenLabs</div>
-  </div>
-</aside>
-
-<footer class="bottom">
-  <span>NO DISPATCHER · NO QUEUE · NO WORKFLOW ENGINE</span>
-  <a href="/" class="back-link">← back to standard view</a>
-</footer>
+<!-- Hidden mounts for the snapshot rehydrator (kept for present.js compat) -->
+<span id="hud-home" hidden></span>
+<span id="hud-native" hidden></span>
+<div id="hud-feed" hidden></div>
 
 <script type="module">
   import { mountJarvisEarth } from '/jarvis-earth.js';

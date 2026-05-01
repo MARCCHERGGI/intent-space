@@ -258,18 +258,63 @@ export function mountJarvisEarth(mountEl) {
   };
   window.addEventListener('resize', onResize);
 
+  // ─────────── ZOOM-TO-MANHATTAN (JARVIS_HOME wake sequence) ───────────
+  // NYC: 40.7128° N, -74.0060° E. We rotate the Earth so NYC faces the camera,
+  // then dive the camera in until Manhattan fills the frame.
+  const NYC = { lat: 40.7128, lon: -74.0060 };
+  function latLonToVec3(lat, lon, r = 1) {
+    const phi = (lat * Math.PI) / 180;
+    const lam = (lon * Math.PI) / 180;
+    return new THREE.Vector3(
+      r * Math.cos(phi) * Math.cos(lam),
+      r * Math.sin(phi),
+      -r * Math.cos(phi) * Math.sin(lam),
+    );
+  }
+  const nycLocal = latLonToVec3(NYC.lat, NYC.lon, 1);
+  const nycTilted = nycLocal.clone().applyQuaternion(earthTilt.quaternion);
+  const spinTargetAngle = Math.atan2(-nycTilted.x, nycTilted.z);
+  const nycFinalDir = new THREE.Vector3(0, nycTilted.y, Math.hypot(nycTilted.x, nycTilted.z)).normalize();
+
+  let zoomState = null; // { t0, dur, fromY, fromCam, toCam }
+  const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+
+  function zoomToManhattan({ duration = 4200 } = {}) {
+    const fromY = earthSpin.rotation.y;
+    let dy = spinTargetAngle - (fromY % (Math.PI * 2));
+    while (dy > Math.PI) dy -= 2 * Math.PI;
+    while (dy < -Math.PI) dy += 2 * Math.PI;
+    const fromCam = camera.position.clone();
+    // Final camera: hover above Manhattan at 1.07 altitude (dramatic close-up)
+    const toCam = nycFinalDir.clone().multiplyScalar(1.085);
+    zoomState = { t0: performance.now(), dur: duration, fromY, dy, fromCam, toCam };
+    return new Promise((resolve) => { zoomState.resolve = resolve; });
+  }
+  // Expose globally so present.js can trigger
+  window.__jarvisZoomToManhattan = zoomToManhattan;
+
   // Render loop
   const start = performance.now();
   function tick() {
-    const t = (performance.now() - start) / 1000;
-    earthSpin.rotation.y = t * 0.04;
+    const now = performance.now();
+    const t = (now - start) / 1000;
+    if (zoomState) {
+      const k = Math.min(1, (now - zoomState.t0) / zoomState.dur);
+      const e = easeOut(k);
+      earthSpin.rotation.y = zoomState.fromY + zoomState.dy * e;
+      camera.position.lerpVectors(zoomState.fromCam, zoomState.toCam, e);
+      camera.lookAt(0, 0, 0);
+      if (k >= 1) { zoomState.resolve?.(); zoomState = null; }
+    } else {
+      earthSpin.rotation.y = (earthSpin.rotation.y || 0) + 0.0005;
+    }
     for (const s of sats) s.pivot.rotation.z = t * s.speed * 0.25;
     renderer.render(scene, camera);
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
 
-  return { scene, camera, renderer, dispose: () => {
+  return { scene, camera, renderer, zoomToManhattan, dispose: () => {
     window.removeEventListener('resize', onResize);
     renderer.dispose();
     if (renderer.domElement.parentNode) renderer.domElement.parentNode.removeChild(renderer.domElement);
