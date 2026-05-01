@@ -26,9 +26,26 @@ html, body {
   height: 100%;
   font-family: var(--font);
   color: var(--ink);
-  background: radial-gradient(1400px 900px at 50% 50%, #0a1828 0%, #030611 70%);
+  background: #000002;
   overflow: hidden;
   letter-spacing: 0.02em;
+}
+
+/* JARVIS v1 Earth scene mount — sits behind everything else */
+.earth-mount {
+  position: fixed; inset: 0;
+  z-index: 0;
+  background: #000002;
+}
+.earth-mount canvas { display: block; width: 100% !important; height: 100% !important; }
+.earth-mount.failed { background: radial-gradient(1400px 900px at 50% 50%, #0a1828 0%, #030611 70%); }
+/* Vignette to anchor the HUD over the Earth */
+.vignette {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background:
+    radial-gradient(ellipse at top, rgba(0,0,0,0.35), transparent 50%),
+    radial-gradient(ellipse at bottom, rgba(0,0,0,0.5), transparent 60%),
+    linear-gradient(90deg, rgba(0,0,0,0.3) 0%, transparent 18%, transparent 82%, rgba(0,0,0,0.3) 100%);
 }
 button { font-family: inherit; cursor: pointer; }
 a { color: inherit; }
@@ -37,16 +54,16 @@ a { color: inherit; }
 .grid {
   position: fixed; inset: 0;
   background-image:
-    linear-gradient(rgba(126,213,255,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(126,213,255,0.04) 1px, transparent 1px);
+    linear-gradient(rgba(126,213,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(126,213,255,0.035) 1px, transparent 1px);
   background-size: 80px 80px;
-  pointer-events: none; z-index: 0;
+  pointer-events: none; z-index: 2;
 }
 .scan-line {
   position: fixed; left: 0; right: 0; top: 0;
   height: 2px; background: linear-gradient(90deg, transparent, var(--jarvis), transparent);
-  filter: blur(1px); opacity: 0.5; z-index: 1;
-  animation: scan 8s linear infinite;
+  filter: blur(1px); opacity: 0.45; z-index: 2;
+  animation: scan 9s linear infinite;
 }
 @keyframes scan { 0% { transform: translateY(0); } 100% { transform: translateY(100vh); } }
 
@@ -56,6 +73,9 @@ a { color: inherit; }
   display: flex; justify-content: space-between; align-items: center;
   padding: 18px 32px;
   border-bottom: 1px solid var(--line-soft);
+  background: linear-gradient(180deg, rgba(3, 7, 13, 0.6), rgba(3, 7, 13, 0.0));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 .logo-block { display: flex; align-items: baseline; gap: 12px; }
 .logo-dot {
@@ -185,11 +205,11 @@ a { color: inherit; }
   .agent-bar { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* ORBITAL DIAGRAM */
-.orbital { position: relative; display: flex; align-items: center; justify-content: center; }
+/* ORBITAL DIAGRAM — drops into the foreground over the JARVIS Earth */
+.orbital { position: relative; display: flex; align-items: center; justify-content: center; opacity: 0.92; }
 .orbital-frame {
   position: relative;
-  width: min(640px, 60vh);
+  width: min(560px, 52vh);
   aspect-ratio: 1;
 }
 .orbit {
@@ -419,7 +439,9 @@ a { color: inherit; }
   padding: 12px 32px;
   font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; color: var(--ink-dim);
   border-top: 1px solid var(--line-soft);
-  background: rgba(0,0,0,0.5);
+  background: linear-gradient(0deg, rgba(0,0,0,0.7), rgba(0,0,0,0.0));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   z-index: 5;
 }
 .back-link { color: var(--ink-dim); text-decoration: none; }

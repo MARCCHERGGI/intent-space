@@ -8,6 +8,9 @@
 </head>
 <body>
 
+<!-- JARVIS v1 Earth scene — Three.js, ported from JARVIS_HOME -->
+<div id="earth-mount" class="earth-mount"></div>
+<div class="vignette"></div>
 <div class="grid"></div>
 <div class="scan-line"></div>
 
@@ -163,6 +166,14 @@
   <a href="/" class="back-link">← back to standard view</a>
 </footer>
 
+<script type="module">
+  import { mountJarvisEarth } from '/jarvis-earth.js';
+  const m = document.getElementById('earth-mount');
+  if (m) {
+    try { mountJarvisEarth(m); }
+    catch (e) { console.warn('[earth] mount failed', e); m.classList.add('failed'); }
+  }
+</script>
 <script src="/present.js"></script>
 </body>
 </html>
