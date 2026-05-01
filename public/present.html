@@ -14,6 +14,62 @@
 <div class="grid"></div>
 <div class="scan-line"></div>
 
+<!-- JARVIS_HOME-style corner brackets — the iconic frame -->
+<div class="hud-corner tl awake-only"></div>
+<div class="hud-corner tr awake-only"></div>
+<div class="hud-corner bl awake-only"></div>
+<div class="hud-corner br awake-only"></div>
+
+<!-- TOP MARKET TAPE — intent-space metrics ticker -->
+<div class="top-tape awake-only">
+  <div class="tape-badge">
+    <span class="tape-dot"></span>
+    INTENT SPACE COUNCIL
+  </div>
+  <div class="tape-scroll" id="tape-scroll">
+    <span class="tp-item"><span class="tp-k">PROTOCOL</span> <span class="tp-v">spacebase1.differ.ac</span></span>
+    <span class="tp-item"><span class="tp-k">SIGNALS</span> <span class="tp-v" id="tp-signals">—</span></span>
+    <span class="tp-item"><span class="tp-k">SYNTHESES</span> <span class="tp-v" id="tp-syntheses">—</span></span>
+    <span class="tp-item"><span class="tp-k">ENGAGED</span> <span class="tp-v" id="tp-engaged">—</span></span>
+    <span class="tp-item"><span class="tp-k">AGENTS</span> <span class="tp-v">4</span></span>
+    <span class="tp-item"><span class="tp-k">ORCHESTRATORS</span> <span class="tp-v zero">0</span></span>
+    <span class="tp-item"><span class="tp-k">MODEL</span> <span class="tp-v">gpt-4o-mini</span></span>
+    <span class="tp-item"><span class="tp-k">VOICE</span> <span class="tp-v">elevenlabs alice</span></span>
+    <span class="tp-item"><span class="tp-k">SUBMISSION</span> <span class="tp-v ok">LIVE</span></span>
+  </div>
+</div>
+
+<!-- BIG CLOCK top-left, JARVIS_HOME style -->
+<div class="hud-clock awake-only">
+  <div class="hcl-time" id="hcl-time">—</div>
+  <div class="hcl-date" id="hcl-date">—</div>
+</div>
+
+<!-- Top-right status block -->
+<div class="hud-status awake-only">
+  <div class="hs-row"><span class="hs-dot"></span><span class="hs-key">SPACEBASE1</span><span class="hs-v">CONNECTED</span></div>
+  <div class="hs-row"><span class="hs-dot"></span><span class="hs-key">DPoP / RS256</span><span class="hs-v">RSA-4096</span></div>
+  <div class="hs-row"><span class="hs-dot"></span><span class="hs-key">COUNCIL</span><span class="hs-v" id="hs-phase">STANDBY</span></div>
+</div>
+
+<!-- BOTTOM-CENTER CHRONOMETER, ms precision, the JARVIS_HOME signature -->
+<div class="chrono awake-only">
+  <span class="ch-pre">T</span>
+  <span id="ch-hh">00</span>
+  <span class="ch-sep">:</span>
+  <span id="ch-mm">00</span>
+  <span class="ch-sep">:</span>
+  <span id="ch-ss">00</span>
+  <span class="ch-ms">.<span id="ch-ms">00</span></span>
+  <span class="ch-zone">UTC<span id="ch-tz">±00</span></span>
+</div>
+
+<!-- NOTIFICATIONS column (right side) — JARVIS_HOME-style activity ticker -->
+<aside class="notif-col awake-only">
+  <div class="nf-head"><span class="nf-dot"></span>LIVE ACTIVITY</div>
+  <div id="nf-feed" class="nf-feed"></div>
+</aside>
+
 <!-- PRE-WAKE OVERLAY — minimal: just the JARVIS pulse + space hint -->
 <section id="pre-wake" class="pre-wake-overlay">
   <div class="pw-pulse"></div>

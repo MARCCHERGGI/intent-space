@@ -17,15 +17,57 @@ const elHudNative = $('#hud-native');
 
 let currentSignalId = null;
 
-// Tick clock
-setInterval(() => { elTime.textContent = new Date().toTimeString().slice(0, 8); }, 1000);
-elTime.textContent = new Date().toTimeString().slice(0, 8);
-
-// Phase setter
-function setPhase(p, classMod) {
-  elPhase.textContent = p;
-  elPhase.className = 'phase ' + (classMod || '');
+// Tick clock — both legacy elTime and the new JARVIS_HOME-style big clock
+const elHclTime = document.getElementById('hcl-time');
+const elHclDate = document.getElementById('hcl-date');
+const elChHH = document.getElementById('ch-hh');
+const elChMM = document.getElementById('ch-mm');
+const elChSS = document.getElementById('ch-ss');
+const elChMS = document.getElementById('ch-ms');
+const elChTZ = document.getElementById('ch-tz');
+const _pad = (n, w = 2) => String(n).padStart(w, '0');
+function tickClocks() {
+  const d = new Date();
+  if (elTime) elTime.textContent = d.toTimeString().slice(0, 8);
+  if (elHclTime) elHclTime.textContent = `${_pad(d.getHours())}:${_pad(d.getMinutes())}`;
+  if (elHclDate) elHclDate.textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }).toUpperCase();
+  if (elChHH) elChHH.textContent = _pad(d.getHours());
+  if (elChMM) elChMM.textContent = _pad(d.getMinutes());
+  if (elChSS) elChSS.textContent = _pad(d.getSeconds());
+  if (elChMS) elChMS.textContent = _pad(Math.floor(d.getMilliseconds() / 10));
+  if (elChTZ) {
+    const off = -d.getTimezoneOffset() / 60;
+    elChTZ.textContent = (off >= 0 ? '+' : '−') + _pad(Math.abs(off));
+  }
 }
+tickClocks();
+setInterval(tickClocks, 250); // 4Hz keeps ms digits live without storming
+
+// Phase setter — updates legacy phase pill AND new HUD status row
+const elHsPhase = document.getElementById('hs-phase');
+function setPhase(p, classMod) {
+  if (elPhase) {
+    elPhase.textContent = p;
+    elPhase.className = 'phase ' + (classMod || '');
+  }
+  if (elHsPhase) elHsPhase.textContent = p;
+}
+
+// Live tape ticker — keep top-tape stats hot from /spacebase-stats
+async function refreshTape() {
+  try {
+    const r = await fetch('/spacebase-stats');
+    const d = await r.json();
+    if (d?.ok) {
+      const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+      set('tp-signals', d.signals ?? 0);
+      set('tp-syntheses', d.syntheses ?? 0);
+      set('tp-engaged', d.perspectives_engaged ?? 0);
+    }
+  } catch {}
+}
+refreshTape();
+setInterval(refreshTape, 4000);
 
 // JARVIS voice — ElevenLabs via /tts, fallback browser TTS
 let voiceQueue = [];
@@ -168,14 +210,26 @@ function humanize(name) {
 
 function pushFeed({ agent, kind, text }) {
   if (kind === 'ERROR' || !text) return;
-  const div = document.createElement('div');
-  div.className = 'hud-feed-line';
-  const a = document.createElement('span'); a.className = `agent ${agent}`; a.textContent = agent;
-  const k = document.createElement('span'); k.style.color = 'var(--ink-faint)'; k.textContent = ` ${kind.toLowerCase()} `;
-  const t = document.createElement('span'); t.textContent = text;
-  div.append(a, k, t);
-  elFeed.prepend(div);
-  while (elFeed.children.length > 24) elFeed.removeChild(elFeed.lastChild);
+  // legacy hidden feed (kept for compat)
+  if (elFeed) {
+    const div = document.createElement('div');
+    div.className = 'hud-feed-line';
+    const a = document.createElement('span'); a.className = `agent ${agent}`; a.textContent = agent;
+    const k = document.createElement('span'); k.style.color = 'var(--ink-faint)'; k.textContent = ` ${kind.toLowerCase()} `;
+    const t = document.createElement('span'); t.textContent = text;
+    div.append(a, k, t);
+    elFeed.prepend(div);
+    while (elFeed.children.length > 24) elFeed.removeChild(elFeed.lastChild);
+  }
+  // JARVIS_HOME-style notifications column
+  const nf = document.getElementById('nf-feed');
+  if (nf) {
+    const line = document.createElement('div');
+    line.className = 'nf-line' + (kind === 'CONVERGE' ? ' toast' : '');
+    line.innerHTML = `<span class="nf-agent ${agent}">${agent}</span><span class="nf-kind">${kind.toLowerCase()}</span>${text || ''}`;
+    nf.prepend(line);
+    while (nf.children.length > 10) nf.removeChild(nf.lastChild);
+  }
 }
 
 // SSE
@@ -280,27 +334,40 @@ async function refreshNative() {
 refreshNative();
 setInterval(refreshNative, 4000);
 
-// Buttons
+// Buttons — ONE relatable real-world intent. Judges instantly grok it.
+// "OpenAI Operator" actually shipped — every shopper/traveler relates.
+const DEMO_INTENT = 'OpenAI just shipped agents that can shop and book travel with your credit card';
+
 $('#run-btn').addEventListener('click', async () => {
   const btn = $('#run-btn');
   btn.disabled = true;
   btn.querySelector('span:last-child').textContent = 'RUNNING…';
-  const SEQ = [
-    'OpenAI ships agents that can issue purchase orders without human approval',
-    'EU passes law requiring AI agents to register before acting on user behalf',
-    'A solo founder shipped a coding agent that hit $50k MRR in 30 days',
-    'Anthropic warns agent-to-agent commerce will outpace KYC by 2027',
-  ];
+
   await fetch('/reset', { method: 'POST' });
-  await new Promise((r) => setTimeout(r, 800));
-  for (const text of SEQ) {
-    await fetch('/signal', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text }),
-    });
-    await new Promise((r) => setTimeout(r, 14000)); // wait for synthesis
-  }
+  await new Promise((r) => setTimeout(r, 600));
+
+  // Pre-narration — captions on screen while JARVIS speaks. Each line is what judges read.
+  await new Promise((r) => setTimeout(r, 200));
+  speak('I will post one real-world intent.');
+  await new Promise((r) => setTimeout(r, 2400));
+  speak('Three lenses will read it independently. No router. No queue.');
+  await new Promise((r) => setTimeout(r, 3400));
+  speak('When two or more engage, synthesis converges. Watch.');
+  await new Promise((r) => setTimeout(r, 3000));
+
+  // Drop the signal
+  await fetch('/signal', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: DEMO_INTENT }),
+  });
+
+  // Hold ~16s while lenses + synthesis run
+  await new Promise((r) => setTimeout(r, 16000));
+
+  // Final beat — close the loop with the meta-truth
+  speak('And every signal you just saw is already on spacebase1, verifiable on protocol.');
+
   btn.disabled = false;
   btn.querySelector('span:last-child').textContent = 'RUN AGAIN';
 });

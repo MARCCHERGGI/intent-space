@@ -1,20 +1,22 @@
-/* JARVIS presenter mode — dark, cinematic, kiosk-ready. */
+/* JARVIS presenter mode — JARVIS_HOME tokens (matches the desktop). */
 :root {
-  --bg-0: #03070d;
+  --bg-0: #010208;
   --bg-1: #060d18;
-  --bg-glass: rgba(8, 22, 38, 0.55);
-  --line: rgba(126, 213, 255, 0.16);
-  --line-soft: rgba(126, 213, 255, 0.08);
-  --ink: #e8f4ff;
+  --bg-glass: linear-gradient(180deg, rgba(10,18,32,0.82) 0%, rgba(3,8,18,0.94) 100%);
+  --line: rgba(108, 244, 255, 0.16);
+  --line-soft: rgba(108, 244, 255, 0.08);
+  --ink: #ffffff;
   --ink-mid: #98b6d6;
   --ink-dim: #5b7da3;
   --ink-faint: #2e4760;
-  --opp: #61f0a0;
-  --risk: #ff6b8a;
-  --real: #6ec1ff;
-  --syn: #c89bff;
-  --jarvis: #7ed5ff;
-  --jarvis-glow: 0 0 24px rgba(126, 213, 255, 0.45);
+  --opp: #7fff9b;
+  --risk: #ff5b6b;
+  --real: #6cf4ff;
+  --syn: #b088ff;
+  --jarvis: #6cf4ff;
+  --jarvis-bright: #c8fdff;
+  --jarvis-soft: #8de5f0;
+  --jarvis-glow: 0 0 24px rgba(108, 244, 255, 0.45);
   --bouncy: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", system-ui, sans-serif;
@@ -622,6 +624,176 @@ body:not(.pre-wake) .pre-wake-overlay { opacity: 0; pointer-events: none; }
   color: var(--jarvis); flex-shrink: 0;
 }
 .cap-text { color: var(--ink); }
+
+/* ═════════════ JARVIS_HOME signature elements ═════════════ */
+
+/* Corner brackets — the frame of every JARVIS HUD */
+.hud-corner {
+  position: fixed;
+  width: 28px; height: 28px;
+  z-index: 6;
+  pointer-events: none;
+  border: 0 solid var(--jarvis);
+}
+.hud-corner.tl { top: 18px; left: 18px; border-top-width: 1px; border-left-width: 1px; }
+.hud-corner.tr { top: 18px; right: 18px; border-top-width: 1px; border-right-width: 1px; }
+.hud-corner.bl { bottom: 18px; left: 18px; border-bottom-width: 1px; border-left-width: 1px; }
+.hud-corner.br { bottom: 18px; right: 18px; border-bottom-width: 1px; border-right-width: 1px; }
+.hud-corner::after {
+  content: ''; position: absolute;
+  width: 4px; height: 4px; background: var(--jarvis);
+  box-shadow: 0 0 6px var(--jarvis);
+}
+.hud-corner.tl::after { top: -2px; left: -2px; }
+.hud-corner.tr::after { top: -2px; right: -2px; }
+.hud-corner.bl::after { bottom: -2px; left: -2px; }
+.hud-corner.br::after { bottom: -2px; right: -2px; }
+
+/* TOP MARKET TAPE — JARVIS_HOME ticker */
+.top-tape {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 28px;
+  background: linear-gradient(180deg, rgba(0,8,16,0.95), rgba(0,4,10,0.85));
+  border-bottom: 1px solid rgba(108,244,255,0.25);
+  display: flex; align-items: center;
+  z-index: 7;
+  pointer-events: none;
+  overflow: hidden;
+  font-family: var(--mono);
+}
+.tape-badge {
+  height: 100%;
+  padding: 0 14px;
+  border-right: 1px solid rgba(108,244,255,0.2);
+  display: flex; align-items: center; gap: 8px;
+  font-size: 9px; letter-spacing: 0.25em;
+  color: var(--jarvis);
+  text-shadow: 0 0 6px var(--jarvis);
+  flex-shrink: 0;
+}
+.tape-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--opp); box-shadow: 0 0 6px var(--opp); animation: jv-blink 1.2s var(--ease) infinite; }
+@keyframes jv-blink { 50% { opacity: 0.4; } }
+.tape-scroll {
+  flex: 1; display: flex; white-space: nowrap;
+  animation: tape-scroll 60s linear infinite;
+  gap: 0;
+}
+@keyframes tape-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.tp-item { display: inline-flex; align-items: center; gap: 8px; padding: 0 22px; font-size: 11px; }
+.tp-k { color: var(--jarvis); letter-spacing: 0.1em; }
+.tp-v { color: #fff; font-variant-numeric: tabular-nums; }
+.tp-v.zero { color: var(--ink); }
+.tp-v.ok { color: var(--opp); text-shadow: 0 0 4px var(--opp); }
+
+/* BIG CLOCK top-left, JARVIS_HOME thin/large/glowing */
+.hud-clock {
+  position: fixed; top: 56px; left: 44px; z-index: 6;
+  font-family: var(--font);
+  letter-spacing: -0.02em;
+}
+.hcl-time {
+  font-size: 52px; font-weight: 200; line-height: 1;
+  color: #fff;
+  text-shadow: 0 0 24px rgba(108,244,255,0.25);
+  font-variant-numeric: tabular-nums;
+}
+.hcl-date {
+  font-size: 10px; opacity: 0.55;
+  margin-top: 10px; letter-spacing: 0.28em;
+  font-family: var(--mono); font-weight: 400;
+  color: #fff;
+}
+
+/* Top-right status block */
+.hud-status {
+  position: fixed; top: 60px; right: 46px; z-index: 6;
+  text-align: right;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.28em;
+}
+.hs-row {
+  display: flex; justify-content: flex-end; align-items: center;
+  gap: 10px; padding: 3px 0;
+}
+.hs-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--opp); box-shadow: 0 0 6px var(--opp); }
+.hs-key { color: var(--jarvis); }
+.hs-v { color: #fff; min-width: 88px; text-align: right; }
+
+/* BOTTOM-CENTER CHRONOMETER — ms-precision JARVIS clock */
+.chrono {
+  position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 11px; letter-spacing: 0.3em;
+  color: var(--jarvis);
+  display: flex; gap: 4px; align-items: baseline;
+  z-index: 6;
+  text-shadow: 0 0 10px rgba(108,244,255,0.5);
+  pointer-events: none;
+}
+.chrono span:not(.ch-pre):not(.ch-sep):not(.ch-ms):not(.ch-zone) { color: #fff; }
+.ch-ms { color: rgba(108,244,255,0.42); }
+.ch-zone { margin-left: 16px; color: rgba(108,244,255,0.42); }
+
+/* NOTIFICATIONS column — right side activity feed */
+.notif-col {
+  position: fixed; top: 280px; right: 26px;
+  width: 240px;
+  z-index: 5;
+  font-family: var(--mono);
+  background: linear-gradient(180deg, rgba(10,18,32,0.82), rgba(3,8,18,0.94));
+  border: 1px solid rgba(108,244,255,0.12);
+  border-radius: 8px;
+  padding: 10px 12px;
+  backdrop-filter: blur(20px) saturate(130%);
+  -webkit-backdrop-filter: blur(20px) saturate(130%);
+  max-height: 50vh; overflow: hidden;
+}
+.nf-head {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.28em;
+  color: var(--jarvis);
+  display: flex; align-items: center; gap: 8px;
+  padding-bottom: 8px; margin-bottom: 8px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.nf-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--opp); box-shadow: 0 0 6px var(--opp); animation: jv-blink 1.2s var(--ease) infinite; }
+.nf-feed {
+  display: flex; flex-direction: column-reverse; gap: 4px;
+  font-size: 10px; line-height: 1.45;
+  max-height: 40vh; overflow: hidden;
+}
+.nf-line {
+  padding: 5px 8px;
+  border-left: 2px solid var(--line);
+  background: rgba(108,244,255,0.04);
+  border-radius: 0 4px 4px 0;
+  color: var(--ink);
+  animation: nf-in 0.3s var(--ease);
+}
+@keyframes nf-in {
+  from { opacity: 0; transform: translateX(8px); }
+  to { opacity: 1; transform: none; }
+}
+.nf-line .nf-agent { font-weight: 700; letter-spacing: 0.08em; }
+.nf-line .nf-agent.OPPORTUNITY { color: var(--opp); }
+.nf-line .nf-agent.RISK { color: var(--risk); }
+.nf-line .nf-agent.REALITY { color: var(--real); }
+.nf-line .nf-agent.SYNTHESIS { color: var(--syn); }
+.nf-line .nf-agent.WORLD, .nf-line .nf-agent.JARVIS { color: var(--jarvis); }
+.nf-line .nf-kind { color: var(--ink-faint); font-size: 9px; padding: 0 4px; }
+.nf-line.toast {
+  border-left-color: var(--opp);
+  background: rgba(127,255,155,0.06);
+  animation: nf-toast-in 0.4s var(--bouncy);
+}
+@keyframes nf-toast-in {
+  0% { opacity: 0; transform: translateX(20px) scale(0.9); }
+  60% { opacity: 1; transform: translateX(-3px) scale(1.02); }
+  100% { transform: none; }
+}
+
+/* Hide the existing hud-feed (replaced by notif-col), and the existing topbar (clock+status replace it) */
+.topbar.awake-only { display: none !important; }
+.intent-hero { padding-top: 152px; }
+@media (max-width: 1100px) { .notif-col { display: none; } }
 
 /* ─────────────────────  PROOF STRIP — top hero band  ───────────────────── */
 .proof-strip {
