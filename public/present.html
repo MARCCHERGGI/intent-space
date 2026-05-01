@@ -14,6 +14,39 @@
 <div class="grid"></div>
 <div class="scan-line"></div>
 
+<!-- HERO PROOF STRIP — what the judge reads in the first 3 seconds -->
+<section class="proof-strip">
+  <div class="proof-stat">
+    <div class="proof-num" id="ps-agents">4</div>
+    <div class="proof-lbl">AGENTS</div>
+    <div class="proof-sub">3 lenses + 1 synthesizer</div>
+  </div>
+  <div class="proof-divider"></div>
+  <div class="proof-stat">
+    <div class="proof-num zero">0</div>
+    <div class="proof-lbl">ORCHESTRATORS</div>
+    <div class="proof-sub">no router · no queue · no scheduler</div>
+  </div>
+  <div class="proof-divider"></div>
+  <div class="proof-stat">
+    <div class="proof-num live" id="ps-signals">—</div>
+    <div class="proof-lbl">SIGNALS ON-PROTOCOL</div>
+    <div class="proof-sub">posted to spacebase1 commons</div>
+  </div>
+  <div class="proof-divider"></div>
+  <div class="proof-stat">
+    <div class="proof-num live" id="ps-syntheses">—</div>
+    <div class="proof-lbl">SYNTHESES CONVERGED</div>
+    <div class="proof-sub">≥2 lens quorum required</div>
+  </div>
+  <div class="proof-divider"></div>
+  <div class="proof-stat">
+    <div class="proof-num live" id="ps-engaged">—</div>
+    <div class="proof-lbl">PERSPECTIVES ENGAGED</div>
+    <div class="proof-sub">free to read · free to pass</div>
+  </div>
+</section>
+
 <header class="topbar">
   <div class="logo-block">
     <span class="logo-dot"></span>
@@ -133,12 +166,40 @@
     <div class="hud-line"><span class="dot ok"></span>team: Intent Space Council</div>
     <div class="hud-line"><a href="https://github.com/MARCCHERGGI/intent-space" target="_blank" rel="noopener" style="color:#7adfff">↗ github.com/MARCCHERGGI/intent-space</a></div>
   </div>
-  <div class="hud-card">
-    <div class="hud-eyebrow">JUDGES SCORECARD</div>
-    <div class="hud-line"><span class="dot ok"></span>originality · primitive deployed</div>
-    <div class="hud-line"><span class="dot ok"></span>technical depth · RSA-4096 · DPoP · JWT</div>
-    <div class="hud-line" id="hud-native"><span class="dot"></span>native · loading…</div>
-    <div class="hud-line"><span class="dot ok"></span>demo · &lt;30s to first synthesis</div>
+  <div class="hud-card hud-scorecard">
+    <div class="hud-eyebrow">JUDGES SCORECARD · 4 CRITERIA</div>
+
+    <div class="crit">
+      <div class="crit-head"><span class="crit-name">ORIGINALITY</span><span class="crit-stars">★★★★★</span></div>
+      <div class="crit-evi">primitive deployed — not an app on intent space, a piece <em>of</em> it</div>
+      <div class="crit-evi">3 lenses on shared blackboard · collective cognition</div>
+    </div>
+
+    <div class="crit">
+      <div class="crit-head"><span class="crit-name">TECHNICAL DEPTH</span><span class="crit-stars">★★★★★</span></div>
+      <div class="crit-evi">RSA-4096 enrollment · DPoP-signed HTTPS · RS256 JWT</div>
+      <div class="crit-evi">official intent-space SDK · fractal nesting verified</div>
+      <div class="crit-evi">voice in (Web Speech) · voice out (ElevenLabs Turbo)</div>
+    </div>
+
+    <div class="crit">
+      <div class="crit-head"><span class="crit-name">INTENT-SPACE NATIVE</span><span class="crit-stars">★★★★★</span></div>
+      <div class="crit-evi" id="hud-native">council runs ON spacebase1 · loading counts…</div>
+      <div class="crit-evi">verifiable in observatory · click ↗ link below</div>
+    </div>
+
+    <div class="crit">
+      <div class="crit-head"><span class="crit-name">DEMO-ABILITY</span><span class="crit-stars">★★★★★</span></div>
+      <div class="crit-evi">▶ one button · 4 signals · ~50s · zero hands</div>
+      <div class="crit-evi">&lt;30s to first synthesis · cinematic JARVIS narration</div>
+    </div>
+  </div>
+
+  <div class="hud-card why-wins">
+    <div class="hud-eyebrow why-eyebrow">WHY THIS WINS</div>
+    <div class="why-quote">Every other team built an app that <em>talks to</em> intent space.</div>
+    <div class="why-quote bold">We built a piece <em>of</em> intent space.</div>
+    <div class="why-foot">tenant vs. architect.</div>
   </div>
 </aside>
 

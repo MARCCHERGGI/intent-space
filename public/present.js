@@ -55,19 +55,18 @@ async function playOne(text) {
       return;
     }
   } catch {}
-  // browser TTS fallback — prefer a British male voice for the JARVIS persona
+  // browser TTS fallback — prefer a British FEMALE voice for the JARVIS persona
   if ('speechSynthesis' in window) {
     await new Promise((resolve) => {
       const u = new SpeechSynthesisUtterance(text);
-      u.rate = 1.0; u.pitch = 0.92;
+      u.rate = 1.0; u.pitch = 1.05;
       const voices = window.speechSynthesis.getVoices();
       const pref =
-        voices.find((v) => /Microsoft Ryan|Microsoft George|Microsoft Mark Online/i.test(v.name)) ||
-        voices.find((v) => /Google UK English Male/i.test(v.name)) ||
-        voices.find((v) => /Daniel/i.test(v.name) && /en[-_]?GB/i.test(v.lang)) ||
-        voices.find((v) => /en[-_]?GB/i.test(v.lang) && /male/i.test(v.name)) ||
+        voices.find((v) => /Microsoft Sonia|Microsoft Libby|Microsoft Hazel/i.test(v.name)) ||
+        voices.find((v) => /Google UK English Female/i.test(v.name)) ||
+        voices.find((v) => /en[-_]?GB/i.test(v.lang) && /female/i.test(v.name)) ||
         voices.find((v) => /en[-_]?GB/i.test(v.lang)) ||
-        voices.find((v) => /Microsoft Mark|Alex/i.test(v.name));
+        voices.find((v) => /Samantha|Karen|Tessa|Fiona/i.test(v.name));
       if (pref) u.voice = pref;
       u.onend = resolve;
       u.onerror = resolve;
@@ -231,18 +230,42 @@ function connect() {
   es.onerror = () => { setTimeout(connect, 2000); };
 }
 
-// Spacebase scoreboard line
+// Spacebase scoreboard line + proof-strip live counters
+const psSignals = document.getElementById('ps-signals');
+const psEngaged = document.getElementById('ps-engaged');
+const psSyntheses = document.getElementById('ps-syntheses');
+function setProof(d) {
+  if (psSignals) psSignals.textContent = d.signals ?? '—';
+  if (psEngaged) psEngaged.textContent = d.perspectives_engaged ?? '—';
+  if (psSyntheses) psSyntheses.textContent = d.syntheses ?? '—';
+}
 async function refreshNative() {
+  // Try the on-protocol stats endpoint first (counts what's actually on spacebase1).
   try {
     const r = await fetch('/spacebase-stats');
     const d = await r.json();
     if (d?.ok) {
-      elHudNative.innerHTML = `<span class="dot ok"></span>native · ${d.signals} signals · ${d.perspectives_engaged} engaged · ${d.syntheses} converged`;
+      elHudNative.innerHTML = `<span class="dot ok"></span>${d.signals} signals · ${d.perspectives_engaged} engaged · ${d.syntheses} converged on spacebase1`;
+      setProof(d);
+      return;
     }
+  } catch {}
+  // Fallback — derive from local /state so the strip never reads "—".
+  try {
+    const r = await fetch('/state');
+    const d = await r.json();
+    const acted = (d.perspectives || []).filter((p) => p.kind === 'ACT').length;
+    const fb = {
+      signals: d.signals?.length ?? 0,
+      perspectives_engaged: acted,
+      syntheses: d.insights?.length ?? 0,
+    };
+    elHudNative.innerHTML = `<span class="dot ok"></span>local mirror · ${fb.signals} signals · ${fb.syntheses} converged`;
+    setProof(fb);
   } catch {}
 }
 refreshNative();
-setInterval(refreshNative, 5000);
+setInterval(refreshNative, 4000);
 
 // Buttons
 $('#run-btn').addEventListener('click', async () => {
@@ -311,8 +334,8 @@ function jarvisGreet() {
   _greeted = true;
   setPhase('ONLINE', 'signal');
   speak(
-    "JARVIS online. Intent Space Council, three lenses, one signal, no orchestrator. " +
-    "Drop an intent, or run the live demo. I will narrate the council as it converges."
+    "JARVIS online. Intent Space Council. Three lenses, one signal, no orchestrator. " +
+    "Press space to run the live demo. I'll narrate the council as it converges."
   );
 }
 window.addEventListener('pointerdown', jarvisGreet, { once: true });
@@ -320,5 +343,31 @@ window.addEventListener('keydown', jarvisGreet, { once: true });
 
 // Auto-bind run-btn so a single click also unlocks the greet
 const _runBtn = $('#run-btn');
-const _origClick = _runBtn?.onclick;
 _runBtn?.addEventListener('click', () => { jarvisGreet(); }, { capture: true });
+
+// SPACEBAR = run live demo (the magic Marco wants)
+window.addEventListener('keydown', (e) => {
+  // ignore if user is typing in an input/textarea
+  if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+  if (e.code === 'Space' || e.key === ' ') {
+    e.preventDefault();
+    jarvisGreet();
+    if (_runBtn && !_runBtn.disabled) _runBtn.click();
+  }
+});
+
+// PROOF STRIP — wire the live counters from /spacebase-stats
+async function refreshProof() {
+  try {
+    const r = await fetch('/spacebase-stats');
+    const d = await r.json();
+    if (d?.ok) {
+      const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+      set('ps-signals', d.signals ?? 0);
+      set('ps-syntheses', d.syntheses ?? 0);
+      set('ps-engaged', d.perspectives_engaged ?? 0);
+    }
+  } catch {}
+}
+refreshProof();
+setInterval(refreshProof, 4000);

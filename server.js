@@ -86,30 +86,37 @@ app.get('/spacebase-stats', async (_req, res) => {
   res.json(data || { error: 'unavailable' });
 });
 
-// ElevenLabs TTS proxy — adds the JARVIS voice. Falls through to browser TTS on the client if this fails.
+// ElevenLabs TTS proxy — JARVIS female voice (Alice, British). Falls through to browser TTS if this fails.
+// Tries the latest multilingual_v2 model first, falls back through turbo_v2_5 → flash_v2_5 if quota/blocked.
 app.get('/tts', async (req, res) => {
   const text = String(req.query.text || '').slice(0, 500);
-  // JARVIS = George (Bettany-JARVIS, British male). Override with ?voice=...
-  const voice = String(req.query.voice || 'JBFqnCBsd6RMkjVDRZzb');
+  const voice = String(req.query.voice || 'Xb7hH8MSUJpSbSDYk0k2'); // Alice — calm, intelligent British female
   const key = process.env.ELEVENLABS_API_KEY;
   if (!text || !key) return res.status(503).json({ error: 'tts unavailable' });
-  try {
-    const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice}?output_format=mp3_44100_128`, {
-      method: 'POST',
-      headers: { 'xi-api-key': key, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        text,
-        model_id: 'eleven_turbo_v2_5',
-        voice_settings: { stability: 0.55, similarity_boost: 0.85, style: 0.15 },
-      }),
-    });
-    if (!r.ok) return res.status(r.status).json({ error: `eleven ${r.status}` });
-    res.set('Content-Type', 'audio/mpeg');
-    const buf = Buffer.from(await r.arrayBuffer());
-    res.send(buf);
-  } catch (e) {
-    res.status(500).json({ error: String(e) });
+  const MODELS = ['eleven_multilingual_v2', 'eleven_turbo_v2_5', 'eleven_flash_v2_5'];
+  for (const model_id of MODELS) {
+    try {
+      const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice}?output_format=mp3_44100_128`, {
+        method: 'POST',
+        headers: { 'xi-api-key': key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text,
+          model_id,
+          voice_settings: { stability: 0.55, similarity_boost: 0.9, style: 0.25, use_speaker_boost: true },
+        }),
+      });
+      if (r.ok) {
+        res.set('Content-Type', 'audio/mpeg');
+        res.set('X-Voice-Model', model_id);
+        return res.send(Buffer.from(await r.arrayBuffer()));
+      }
+      if (r.status >= 500 || r.status === 429) continue;
+      return res.status(r.status).json({ error: `eleven ${r.status}`, model_id });
+    } catch (e) {
+      // try next model
+    }
   }
+  res.status(503).json({ error: 'all eleven models failed — falling back to browser TTS' });
 });
 
 app.post('/signal', (req, res) => {
