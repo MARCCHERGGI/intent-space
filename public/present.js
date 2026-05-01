@@ -30,12 +30,24 @@ function setPhase(p, classMod) {
 // JARVIS voice — ElevenLabs via /tts, fallback browser TTS
 let voiceQueue = [];
 let voicePlaying = false;
+const elCaptionBar = document.getElementById('caption-bar');
+const elCaptionText = document.getElementById('caption-text');
+let _capTimer = null;
+function showCaption(text) {
+  if (!elCaptionBar || !elCaptionText) return;
+  elCaptionText.textContent = text;
+  elCaptionBar.classList.add('live');
+  clearTimeout(_capTimer);
+  _capTimer = setTimeout(() => elCaptionBar.classList.remove('live'), 6000);
+}
 async function speak(text) {
   voiceQueue.push(text);
+  showCaption(text);
   if (voicePlaying) return;
   voicePlaying = true;
   while (voiceQueue.length) {
     const t = voiceQueue.shift();
+    showCaption(t);
     await playOne(t);
   }
   voicePlaying = false;
@@ -105,6 +117,7 @@ function setAgentCard(agent, { status, text } = {}) {
 function startSignal(signal) {
   currentSignalId = signal.id;
   elSignal.textContent = signal.text;
+  // intent-hero text variant uses different alive animation class
   elSignal.classList.remove('alive');
   void elSignal.offsetWidth;
   elSignal.classList.add('alive');
@@ -358,6 +371,10 @@ window.addEventListener('keydown', (e) => {
   }
 });
 window.addEventListener('pointerdown', wakeJarvis, { once: true });
+
+// Auto-wake fallback — if no human gesture in 6s, begin anyway so the demo never sits on a splash.
+// Voice may be muted by autoplay-policy until first gesture; the visible zoom + UI reveal still fires.
+setTimeout(() => { if (!_woken) wakeJarvis(); }, 6000);
 
 // Run-again button just runs (assumes already woken)
 $('#run-btn')?.addEventListener('click', () => { _woken = true; document.body.classList.remove('pre-wake'); });

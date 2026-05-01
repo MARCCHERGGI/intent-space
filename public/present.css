@@ -514,6 +514,115 @@ body:not(.pre-wake) .pre-wake-overlay { opacity: 0; pointer-events: none; }
 
 .spacer { flex: 1; min-height: 30px; }
 
+/* ───────── INTENT HERO — the thing under the microscope ───────── */
+.intent-hero {
+  position: relative; z-index: 4;
+  text-align: center;
+  padding: 8px 32px 14px;
+  margin: 0 auto 12px;
+  max-width: 1200px;
+}
+.ih-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px; font-weight: 700; letter-spacing: 0.32em;
+  color: var(--jarvis); opacity: 0.9;
+  margin-bottom: 8px;
+  text-shadow: 0 0 12px rgba(126,213,255,0.45);
+}
+.ih-text {
+  font-size: clamp(22px, 3.4vw, 44px);
+  line-height: 1.18; font-weight: 600;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+  text-shadow: 0 0 24px rgba(126,213,255,0.18);
+  transition: all 0.5s var(--bouncy);
+}
+.ih-text.alive { animation: ih-alive 0.7s var(--bouncy); }
+@keyframes ih-alive {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); filter: blur(4px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+
+/* ───────── PER-AGENT DISTINCT VISUAL IDENTITY ───────── */
+/* When ENGAGED, each agent's card paints with its own full color treatment */
+.agent-card {
+  cursor: default;
+  transform: translateZ(0);
+}
+.agent-card[data-agent="OPPORTUNITY"] { --acolor: #61f0a0; --acolor-deep: #1d8a4a; }
+.agent-card[data-agent="RISK"]        { --acolor: #ff6b8a; --acolor-deep: #b8323a; }
+.agent-card[data-agent="REALITY"]     { --acolor: #6ec1ff; --acolor-deep: #3a4ea8; }
+.agent-card[data-agent="SYNTHESIS"]   { --acolor: #c89bff; --acolor-deep: #6b3aa8; }
+
+.agent-card .ac-name { font-size: 12px; }
+.agent-card .ac-text { font-size: 13px; line-height: 1.42; min-height: 36px; color: var(--ink); }
+
+/* THINKING — strong heartbeat */
+.agent-card.thinking {
+  animation: ac-thinking-frame 1.6s var(--ease) infinite;
+}
+@keyframes ac-thinking-frame {
+  0%, 100% { box-shadow: 0 0 0 1px var(--acolor) inset, 0 0 18px color-mix(in srgb, var(--acolor) 18%, transparent); }
+  50%      { box-shadow: 0 0 0 1px var(--acolor) inset, 0 0 36px color-mix(in srgb, var(--acolor) 38%, transparent); }
+}
+
+/* ENGAGED — full per-agent paint, very distinct */
+.agent-card.engaged {
+  background: linear-gradient(155deg,
+    color-mix(in srgb, var(--acolor) 18%, var(--bg-glass)) 0%,
+    color-mix(in srgb, var(--acolor-deep) 12%, var(--bg-glass)) 100%) !important;
+  border: 1px solid var(--acolor) !important;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--acolor) 25%, transparent) inset,
+    0 0 28px color-mix(in srgb, var(--acolor) 28%, transparent),
+    0 8px 24px -8px color-mix(in srgb, var(--acolor-deep) 60%, transparent) !important;
+  animation: ac-arrive 0.55s var(--bouncy);
+}
+@keyframes ac-arrive {
+  0%   { opacity: 0.4; transform: translateY(8px) scale(0.97); filter: brightness(1.6); }
+  60%  { opacity: 1;   transform: translateY(-2px) scale(1.02); }
+  100% { opacity: 1;   transform: none; }
+}
+.agent-card.engaged .ac-name { color: var(--acolor); }
+.agent-card.engaged .ac-mark {
+  background: var(--acolor); color: #02060f !important;
+  box-shadow: 0 0 24px var(--acolor);
+  animation: ac-mark-pulse 2s var(--ease) infinite;
+}
+@keyframes ac-mark-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+/* PASSED — explicitly show the agent declined this signal */
+.agent-card.passed { opacity: 0.5; }
+.agent-card.passed .ac-text::before { content: "passed · "; color: var(--ink-faint); font-style: italic; }
+
+/* ───────── CAPTION BAR — what JARVIS just said ───────── */
+.caption-bar {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: 64px;
+  z-index: 5;
+  display: flex; align-items: center; gap: 12px;
+  max-width: min(900px, 90vw);
+  padding: 10px 18px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(3, 7, 13, 0.7);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  font-size: 13px; line-height: 1.4;
+  color: var(--ink);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+}
+.caption-bar.live { opacity: 1; }
+.cap-prefix {
+  font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+  color: var(--jarvis); flex-shrink: 0;
+}
+.cap-text { color: var(--ink); }
+
 /* ─────────────────────  PROOF STRIP — top hero band  ───────────────────── */
 .proof-strip {
   position: fixed; top: 64px; left: 50%; transform: translateX(-50%);

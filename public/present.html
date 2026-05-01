@@ -37,6 +37,12 @@
 
 <main class="stage awake-only">
 
+  <!-- INTENT — huge, top-center, the thing the council is reasoning about -->
+  <section class="intent-hero">
+    <div class="ih-eyebrow">INTENT</div>
+    <div id="signal-text" class="ih-text">awaiting signal…</div>
+  </section>
+
   <!-- AGENT STATUS BAR — 4 cards, the only content -->
   <section class="agent-bar">
     <div class="agent-card" data-agent="OPPORTUNITY">
@@ -75,12 +81,6 @@
 
   <div class="spacer"></div>
 
-  <!-- Active signal — single line, big, center -->
-  <section class="signal-block">
-    <div class="block-eyebrow">CURRENT INTENT</div>
-    <div id="signal-text" class="signal-text">—</div>
-  </section>
-
   <!-- Synthesis result — appears only when council converges -->
   <section class="synthesis-block" id="synthesis-block">
     <div class="syn-row">
@@ -94,6 +94,12 @@
   </section>
 
 </main>
+
+<!-- CAPTION BAR — closed-caption mirror of what JARVIS speaks -->
+<div id="caption-bar" class="caption-bar awake-only">
+  <span class="cap-prefix">JARVIS ›</span>
+  <span id="caption-text" class="cap-text"></span>
+</div>
 
 <!-- Hidden orbital scaffolding kept for present.js compatibility (no visual weight) -->
 <div class="orbital-hidden" aria-hidden="true">
