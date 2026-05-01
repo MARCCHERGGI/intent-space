@@ -55,6 +55,50 @@ function setPhase(p, classMod) {
   if (elBbPhase) elBbPhase.textContent = p;
 }
 
+// ─── PANEL LIVE TICK — keep mini-panels feeling alive ───
+const liveTick = (() => {
+  // base values + slight jitter so it always looks moving
+  let tsla = 248.42, btc = 71840, eth = 3612, vix = 14.20;
+  let ig = 568, reach = 182400, eng = 8.4;
+  function step() {
+    tsla += (Math.random() - 0.45) * 0.6;
+    btc  += (Math.random() - 0.45) * 80;
+    eth  += (Math.random() - 0.45) * 6;
+    vix  += (Math.random() - 0.55) * 0.05;
+    if (Math.random() < 0.18) ig += 1; // followers tick up sometimes
+    reach += Math.floor(Math.random() * 120);
+    eng = Math.max(7.5, Math.min(9.2, eng + (Math.random() - 0.5) * 0.05));
+    // update DOM in market panel rows
+    const rows = document.querySelectorAll('.market-panel .mk-row');
+    if (rows[0]) rows[0].querySelector('.mk-px').textContent = '$' + tsla.toFixed(2);
+    if (rows[1]) rows[1].querySelector('.mk-px').textContent = '$' + Math.round(btc).toLocaleString();
+    if (rows[2]) rows[2].querySelector('.mk-px').textContent = '$' + Math.round(eth).toLocaleString();
+    if (rows[3]) rows[3].querySelector('.mk-px').textContent = vix.toFixed(2);
+    // update social panel
+    const num = document.querySelector('.sp-num');
+    if (num) num.textContent = '+' + ig;
+    const stats = document.querySelectorAll('.sp-stat .sp-v');
+    if (stats[0]) stats[0].textContent = reach.toLocaleString();
+    if (stats[1]) stats[1].textContent = eng.toFixed(1) + '%';
+    // update bars — shift left, add new bar based on jitter
+    const bars = document.querySelector('.sp-bars');
+    if (bars && bars.children.length) {
+      const last = bars.lastElementChild;
+      const newH = 30 + Math.random() * 65;
+      const isHot = newH > 70;
+      // simple cycle: every tick rotate heights
+      [...bars.children].forEach((b, i) => {
+        const next = bars.children[i + 1];
+        if (next) b.style.height = next.style.height;
+      });
+      last.style.height = newH + '%';
+      last.classList.toggle('hot', isHot);
+    }
+  }
+  setInterval(step, 1800);
+  return { step };
+})();
+
 // Live tape ticker — keep top-tape stats hot from /spacebase-stats
 async function refreshTape() {
   try {
