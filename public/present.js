@@ -337,8 +337,8 @@ refreshNative();
 setInterval(refreshNative, 4000);
 
 // Buttons — ONE relatable real-world intent. Judges instantly grok it.
-// "OpenAI Operator" actually shipped — every shopper/traveler relates.
-const DEMO_INTENT = 'OpenAI just shipped agents that can shop and book travel with your credit card';
+// Tesla just unveiled Model 2 + Marco's IG +568 in 7 days — real-world, judge-relatable.
+const DEMO_INTENT = 'Tesla unveils $25K Model 2 with Q3 deliveries while a solo creator gains 568 Instagram followers in 7 days from one viral AI demo';
 
 $('#run-btn').addEventListener('click', async () => {
   const btn = $('#run-btn');
