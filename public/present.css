@@ -120,11 +120,11 @@ a { color: inherit; }
   gap: 14px;
 }
 
-/* AGENT STATUS BAR — the clear panel row */
+/* AGENT BAR — JARVIS_HOME PanelFrame parity */
 .agent-bar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  gap: 14px;
   padding: 0;
 }
 .agent-card {
@@ -133,16 +133,60 @@ a { color: inherit; }
   grid-template-columns: 38px 1fr;
   grid-template-rows: auto auto;
   grid-template-areas: "mark meta" "text text";
-  gap: 4px 12px;
-  padding: 12px 14px;
-  background: var(--bg-glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--line);
-  border-radius: 12px;
+  gap: 6px 12px;
+  padding: 14px 14px 18px;
+  background: linear-gradient(180deg, rgba(10,18,32,0.82) 0%, rgba(3,8,18,0.94) 100%);
+  backdrop-filter: blur(20px) saturate(130%);
+  -webkit-backdrop-filter: blur(20px) saturate(130%);
+  border: 1px solid rgba(108,244,255,0.12);
+  border-radius: 8px;
   transition: all 0.4s var(--ease);
-  min-height: 84px;
+  min-height: 110px;
+  overflow: hidden;
+  isolation: isolate;
 }
+/* JARVIS_HOME panel layered effects — applied per agent-card */
+.agent-card::before {
+  /* top inner chromed highlight */
+  content: '';
+  position: absolute; top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  pointer-events: none; z-index: 2;
+}
+.agent-card::after {
+  /* bottom data-flow line */
+  content: '';
+  position: absolute; bottom: 0; left: 0; height: 1px; width: 100%;
+  background: linear-gradient(90deg, transparent, var(--acolor, var(--jarvis)), transparent);
+  background-size: 50% 100%; background-repeat: no-repeat;
+  background-position: -50% 0;
+  animation: ac-data-flow 3s linear infinite;
+  pointer-events: none; z-index: 2;
+  opacity: 0.6;
+}
+@keyframes ac-data-flow { to { background-position: 150% 0; } }
+/* Corner fiducials per panel */
+.agent-card .ac-corner {
+  position: absolute; width: 10px; height: 10px;
+  border: 0 solid var(--acolor, var(--jarvis));
+  pointer-events: none; z-index: 3;
+}
+.agent-card .ac-corner.tl { top: 6px; left: 6px; border-top-width: 1px; border-left-width: 1px; }
+.agent-card .ac-corner.tr { top: 6px; right: 6px; border-top-width: 1px; border-right-width: 1px; }
+.agent-card .ac-corner.bl { bottom: 6px; left: 6px; border-bottom-width: 1px; border-left-width: 1px; }
+.agent-card .ac-corner.br { bottom: 6px; right: 6px; border-bottom-width: 1px; border-right-width: 1px; }
+.agent-card .ac-corner::after {
+  content: ''; position: absolute;
+  width: 3px; height: 3px;
+  background: var(--acolor, var(--jarvis));
+  box-shadow: 0 0 4px var(--acolor, var(--jarvis));
+  animation: jv-blink 1.6s var(--ease) infinite;
+}
+.agent-card .ac-corner.tl::after { top: -2px; left: -2px; }
+.agent-card .ac-corner.tr::after { top: -2px; right: -2px; }
+.agent-card .ac-corner.bl::after { bottom: -2px; left: -2px; }
+.agent-card .ac-corner.br::after { bottom: -2px; right: -2px; }
 .agent-card[data-agent="OPPORTUNITY"] { --acolor: var(--opp); }
 .agent-card[data-agent="RISK"]        { --acolor: var(--risk); }
 .agent-card[data-agent="REALITY"]     { --acolor: var(--real); }
@@ -556,8 +600,22 @@ body:not(.pre-wake) .pre-wake-overlay { opacity: 0; pointer-events: none; }
 .agent-card[data-agent="REALITY"]     { --acolor: #6ec1ff; --acolor-deep: #3a4ea8; }
 .agent-card[data-agent="SYNTHESIS"]   { --acolor: #c89bff; --acolor-deep: #6b3aa8; }
 
-.agent-card .ac-name { font-size: 12px; }
-.agent-card .ac-text { font-size: 13px; line-height: 1.42; min-height: 36px; color: var(--ink); }
+/* JARVIS_HOME panel header style — shimmer text */
+.agent-card .ac-name {
+  font-family: var(--mono); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.22em;
+  background: linear-gradient(90deg, var(--jarvis) 0%, #fff 50%, var(--jarvis) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  animation: jv-shimmer 4s linear infinite;
+}
+@keyframes jv-shimmer { to { background-position: -200% 0; } }
+.agent-card .ac-text {
+  font-size: 13px; line-height: 1.45; min-height: 36px;
+  color: var(--ink);
+  font-family: var(--mono); font-weight: 500;
+}
 
 /* THINKING — strong heartbeat */
 .agent-card.thinking {
