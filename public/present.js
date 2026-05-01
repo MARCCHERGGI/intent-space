@@ -43,14 +43,16 @@ function tickClocks() {
 tickClocks();
 setInterval(tickClocks, 250); // 4Hz keeps ms digits live without storming
 
-// Phase setter — updates legacy phase pill AND new HUD status row
+// Phase setter — updates legacy phase pill, HUD status row, briefing band
 const elHsPhase = document.getElementById('hs-phase');
+const elBbPhase = document.getElementById('bb-phase');
 function setPhase(p, classMod) {
   if (elPhase) {
     elPhase.textContent = p;
     elPhase.className = 'phase ' + (classMod || '');
   }
   if (elHsPhase) elHsPhase.textContent = p;
+  if (elBbPhase) elBbPhase.textContent = p;
 }
 
 // Live tape ticker — keep top-tape stats hot from /spacebase-stats
